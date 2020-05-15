@@ -1,0 +1,71 @@
+#!/bin/bash -f
+#
+# Queries the CRI using crictl to find the pod names and IP addresses
+# Creates a CoreDNS file plugin-compatible hosts file 
+# 
+#
+
+mkdir -p /tmp/cridns
+
+TMPFILE="/tmp/cridns/smarterdns.$$"
+DNSFILE="/tmp/cridns/smarterdns"
+
+
+env
+
+# Setup to use default containerd socket
+CRI_SOCKET_DIR=${CRI_DIR:-"unix:///run/containerd"}
+CRI_SOCKET_FILE=${CRI_FILE:-"containerd.sock"}
+CRICTL_SOCKET=${CRI_SOCKET_DIR}/${CRI_SOCKET_FILE}
+
+#
+echo "crictl using socket: ${CRICTL_SOCKET}"
+echo "Container runtime info:"
+crictl -r ${CRICTL_SOCKET} info
+
+
+LOGGING=${DNS_LOGGING:-"False"}
+
+
+
+# cleanup
+rm -rf pod_dns.*
+
+
+while true; do
+
+# Get the list of pods from the container runtime    
+    pods=`crictl -r ${CRICTL_SOCKET} pods -q`
+
+# if there are pods
+    if [[ ! -z $pods ]]; then
+        
+        rm -f $TMPFILE
+
+        echo -n "# " > $TMPFILE
+        date >> $TMPFILE
+    
+        for pod in $pods
+        do
+            IFS=', ' read -r -a  res < <(crictl -r ${CRICTL_SOCKET} inspectp -o json $pod | jq -r '[.status.network.ip, .info.config.hostname, .status.state] | join(",")')
+
+            if [ ${res[2]} == "SANDBOX_READY" ]; then 
+                if [[ ! -z "${res[0]}" ]]; then
+                    if [ ${LOGGING} == "True" ]; then 
+                        echo ${res[0]} ${res[1]} ${res[1]}."cluster" ${res[1]}."cluster.local"
+                    fi    
+                    echo ${res[0]} ${res[1]} ${res[1]}."cluster" ${res[1]}."cluster.local" >> $TMPFILE
+                fi
+            fi
+        done
+
+# swap TMPFILE and File read by COREDNS    
+        rm -f $DNSFILE
+        mv $TMPFILE $DNSFILE
+    fi
+
+    sleep 5
+done
+
+
+
