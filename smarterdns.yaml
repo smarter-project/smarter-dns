@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarterdnscorefile
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+      hosts /tmp/cridns/smarterdns {
+        reload 5s
+        fallthrough
+      }
+      forward . /etc/resolv.conf
+      log
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarterdnsconfig
+  namespace: kube-system
+data:
+  DNS_LOGGING: "False"
+  CRI_DIR: "unix:///run/containerd"
+  CRI_FILE: "containerd.sock"
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: smarterdns
+  namespace: kube-system
+  labels:
+    k8s-app: kube-dns
+    kubernetes.io/name: "CoreDNS"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kube-dns
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-dns
+    spec:
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      hostNetwork: true
+      containers:
+      - name: smarterdns
+        image: registry.gitlab.com/arm-research/smarter/smarterdns:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 270Mi
+          requests:
+            cpu: 100m
+            memory: 150Mi
+        args: [ "-conf", "/etc/coredns/corefile" ]
+        envFrom:
+          - configMapRef:
+             name: smarterdnsconfig
+        volumeMounts:
+        # Defaults to using the standard directory containing the containerd socket
+        - name: crisock
+          mountPath: /run/containerd
+        - name: config-volume
+          mountPath: /etc/coredns
+        ports:
+        - containerPort: 53
+          name: dns
+          protocol: UDP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - all
+          readOnlyRootFilesystem: false
+      dnsPolicy: Default
+      volumes:
+        # Defaults to using the standard directory containing the containerd socket
+        - name: crisock
+          hostPath:
+            path: /run/containerd
+        - name: config-volume
+          configMap:
+            name: smarterdnscorefile
+            items:
+            - key: Corefile
+              path: corefile
+---
