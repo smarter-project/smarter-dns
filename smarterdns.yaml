@@ -46,7 +46,7 @@ spec:
       hostNetwork: true
       containers:
       - name: smarterdns
-        image: registry.gitlab.com/arm-research/smarter/smarterdns:latest
+        image: registry.gitlab.com/arm-research/smarter/smarterdns:1.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:

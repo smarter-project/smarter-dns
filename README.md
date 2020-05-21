@@ -11,11 +11,11 @@ Once you have a coredns binary, it should be placed in this top-level directory.
 
 Example to build the smarterdns image using docker:
 
-`   docker build -t registry.gitlab.com/arm-research/smarter/smarterdns:latest .`
+`   docker build -t registry.gitlab.com/arm-research/smarter/smarterdns:1.0 .`
 
 You can trhen push the image into the registry:
 
-`   docker push registry.gitlab.com/arm-research/smarter/smarterdns:latest`
+`   docker push registry.gitlab.com/arm-research/smarter/smarterdns:1.0`
 
 You will need to replace "registry.gitlab.com/arm-research/smarter" with your own registry and then adjust the YAML file accordingly.
 
