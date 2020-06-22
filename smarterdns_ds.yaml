@@ -27,7 +27,7 @@ data:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: smarterdns
+  name: smarter-dns
   namespace: kube-system
   labels:
     k8s-app: kube-dns
@@ -45,8 +45,8 @@ spec:
         beta.kubernetes.io/os: linux
       hostNetwork: true
       containers:
-      - name: smarterdns
-        image: registry.gitlab.com/arm-research/smarter/smarterdns:1.0
+      - name: smarter-dns
+        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -64,6 +64,8 @@ spec:
           mountPath: /run/containerd
         - name: config-volume
           mountPath: /etc/coredns
+        - name: k3s
+          mountPath: /usr/local/bin/k3s
         ports:
         - containerPort: 53
           name: dns
@@ -85,6 +87,9 @@ spec:
         - name: crisock
           hostPath:
             path: /run/containerd
+        - name: k3s
+          hostPath:
+            path: /usr/local/bin/k3s
         - name: config-volume
           configMap:
             name: smarterdnscorefile
