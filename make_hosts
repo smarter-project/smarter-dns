@@ -49,9 +49,9 @@ while true; do
     
         for pod in $pods
         do
-            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod | jq -r '[.status.network.ip, .info.config.hostname, .status.state] | join(",")')
+            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state] | join(",")')
 
-            if [ ${res[2]} == "SANDBOX_READY" ]; then 
+            if [ ${res[2]} == "sandbox_ready" ]; then 
                 if [[ ! -z "${res[0]}" ]]; then
                     if [ ${LOGGING} == "True" ]; then 
                         echo ${res[0]} ${res[1]} ${res[1]}."cluster" ${res[1]}."cluster.local"
