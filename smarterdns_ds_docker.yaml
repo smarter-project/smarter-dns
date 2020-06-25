@@ -28,7 +28,7 @@ data:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: smarter-dns
+  name: smarter-dns-docker
   namespace: kube-system
   labels:
     k8s-app: kube-dns
@@ -43,7 +43,7 @@ spec:
         k8s-app: kube-dns
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        smarter.cri: docker
       hostNetwork: true
       containers:
       - name: smarter-dns
