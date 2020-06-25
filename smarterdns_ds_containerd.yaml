@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarterdnscorefile
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+      hosts /tmp/cridns/smarterdns {
+        reload 5s
+        fallthrough
+      }
+      forward . /etc/resolv.conf
+      log
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarterdnsconfig
+  namespace: kube-system
+data:
+  DNS_LOGGING: "False"
+  CRI_DIR: "unix:///var/run/crisock"
+  CRI_FILE: "containerd.sock"
+  CRICTL_BIN : "/usr/bin/k3s crictl"
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: smarter-dns-containerd
+  namespace: kube-system
+  labels:
+    k8s-app: kube-dns
+    kubernetes.io/name: "CoreDNS"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kube-dns
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-dns
+    spec:
+      nodeSelector:
+        smarter.cri: containerd
+      hostNetwork: true
+      containers:
+      - name: smarter-dns
+        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 270Mi
+          requests:
+            cpu: 100m
+            memory: 150Mi
+        args: [ "-conf", "/etc/coredns/corefile" ]
+        envFrom:
+          - configMapRef:
+             name: smarterdnsconfig
+        volumeMounts:
+        # Defaults to using the standard directory containing the containerd socket
+        - name: crisock
+          mountPath: /var/run/crisock
+        - name: config-volume
+          mountPath: /etc/coredns
+        - name: k3s
+          mountPath: /usr/bin/k3s
+        ports:
+        - containerPort: 53
+          name: dns
+          protocol: UDP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - all
+          readOnlyRootFilesystem: false
+      dnsPolicy: Default
+      volumes:
+        # Defaults to using the standard directory containing the containerd socket
+        - name: crisock
+          hostPath:
+            path: /var/run/containerd
+        - name: k3s
+          hostPath:
+            path: /usr/bin/k3s
+            type: File
+        - name: config-volume
+          configMap:
+            name: smarterdnscorefile
+            items:
+            - key: Corefile
+              path: corefile
+---
