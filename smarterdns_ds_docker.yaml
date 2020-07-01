@@ -39,11 +39,18 @@ spec:
       k8s-app: kube-dns
   template:
     metadata:
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
       labels:
         k8s-app: kube-dns
     spec:
       nodeSelector:
         smarter.cri: docker
+      tolerations:
+        - key: "smarter.type"
+          operator: "Equal"
+          value: "edge"
+          effect: "NoSchedule"
       hostNetwork: true
       containers:
       - name: smarter-dns
