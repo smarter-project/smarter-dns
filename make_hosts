@@ -1,4 +1,4 @@
-#!/bin/bash -fvx
+#!/bin/bash -f 
 #
 # Queries the CRI using crictl to find the pod names and IP addresses
 # Creates a CoreDNS file plugin-compatible hosts file
@@ -31,6 +31,8 @@ LOGGING=${DNS_LOGGING:-"False"}
 
 host=`hostname`
 
+
+GATEWAY=$(ip addr show dev smartnet0 | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
 # cleanup
 rm -rf pod_dns.*
 
@@ -51,19 +53,20 @@ done=""
         for pod in $pods
         do
             IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name] | join(",")')
-
             if [ ${res[2]} == "sandbox_ready" ]; then
                 if [[  -z "${res[0]}" ]]; then
-                  ip="172.38.0.1"
-                  name=${res[4]}
+                  ip=$GATEWAY
+                  name=${res[3]}
                 else
                   ip=${res[0]}
                   name=${res[1]}
                 fi
-                if [ ${LOGGING} == "True" ]; then
-                    echo $ip $name $name.cluster $name."cluster.local"
-                fi
-                echo $ip $name $name.cluster $name."cluster.local"  >> $TMPFILE
+		if [[ ! -z $name ]]; then 
+                  if [ ${LOGGING} == "True" ]; then
+                      echo $ip $name $name.cluster $name."cluster.local"
+                  fi
+                  echo $ip $name $name.cluster $name."cluster.local"  >> $TMPFILE
+	        fi
             fi
         done
 
