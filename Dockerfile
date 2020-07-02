@@ -21,7 +21,7 @@ COPY --from=build /coredns/coredns /
 
 RUN apt-get update && apt-get -uy upgrade
 RUN apt-get -y install ca-certificates && update-ca-certificates
-RUN apt-get -y install jq wget 
+RUN apt-get -y install jq wget iproute2 iptables 
 
 
 COPY make_hosts /make_hosts

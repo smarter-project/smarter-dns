@@ -1,8 +1,8 @@
-#!/bin/bash -f
+#!/bin/bash -fvx
 #
 # Queries the CRI using crictl to find the pod names and IP addresses
-# Creates a CoreDNS file plugin-compatible hosts file 
-# 
+# Creates a CoreDNS file plugin-compatible hosts file
+#
 #
 
 mkdir -p /tmp/cridns
@@ -29,45 +29,48 @@ crictl -r ${CRICTL_SOCKET} info
 LOGGING=${DNS_LOGGING:-"False"}
 
 
+host=`hostname`
 
 # cleanup
 rm -rf pod_dns.*
 
 
 while true; do
-
-# Get the list of pods from the container runtime    
+done=""
+# Get the list of pods from the container runtime
     pods=`${CRICTL} -r ${CRICTL_SOCKET} pods -q`
 
 # if there are pods
     if [[ ! -z $pods ]]; then
-        
+
         rm -f $TMPFILE
 
         echo -n "# " > $TMPFILE
         date >> $TMPFILE
-    
+
         for pod in $pods
         do
-            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state] | join(",")')
+            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name] | join(",")')
 
-            if [ ${res[2]} == "sandbox_ready" ]; then 
-                if [[ ! -z "${res[0]}" ]]; then
-                    if [ ${LOGGING} == "True" ]; then 
-                        echo ${res[0]} ${res[1]} ${res[1]}."cluster" ${res[1]}."cluster.local"
-                    fi    
-                    echo ${res[0]} ${res[1]} ${res[1]}."cluster" ${res[1]}."cluster.local" >> $TMPFILE
+            if [ ${res[2]} == "sandbox_ready" ]; then
+                if [[  -z "${res[0]}" ]]; then
+                  ip="172.38.0.1"
+                  name=${res[4]}
+                else
+                  ip=${res[0]}
+                  name=${res[1]}
                 fi
+                if [ ${LOGGING} == "True" ]; then
+                    echo $ip $name $name.cluster $name."cluster.local"
+                fi
+                echo $ip $name $name.cluster $name."cluster.local"  >> $TMPFILE
             fi
         done
 
-# swap TMPFILE and File read by COREDNS    
+# swap TMPFILE and File read by COREDNS
         rm -f $DNSFILE
         mv $TMPFILE $DNSFILE
     fi
 
     sleep 5
 done
-
-
-
