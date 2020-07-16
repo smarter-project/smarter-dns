@@ -70,7 +70,7 @@ Discovery of pod IPs from the host can also be performed by querying the same ad
 To build the smarter-dns image using docker:
 
     docker buildx create --use --name mybuild
-    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t registry.gitlab.com/arm-research/smarter-dns/smarter-dns:v1.0 --push .
+    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t registry.gitlab.com/arm-research/smarter/smarter-dns:v1.0 --push .
 
 
 You can replace "registry.gitlab.com/arm-research/smarter" with your own registry and then adjust the YAML file accordingly.

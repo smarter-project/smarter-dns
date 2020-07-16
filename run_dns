@@ -3,17 +3,6 @@
 # 
 
 
-comment=smarter-dns
-
-# Remove any existing iptable rules
-echo "Removing any existing iptables rules"
-iptables-legacy -t nat -S | grep "${comment}" | sed 's/^-A //' | while read rule; do iptables-legacy -t nat -D $rule; done 
-
-# Add iptable rules for smarter-dns
-echo "Add iptable rules for smarter-dns"
-iptables-legacy -t nat -A PREROUTING -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${GW}
-iptables-legacy -t nat -A OUTPUT     -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${GW} 
-
 
 /make_hosts &
 

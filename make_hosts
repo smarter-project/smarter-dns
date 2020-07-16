@@ -36,6 +36,21 @@ host=`hostname`
 
 
 HOSTIP=$(ip addr show dev eth0 | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
+
+
+
+comment=smarter-dns
+
+# Remove any existing iptable rules
+echo "Removing any existing iptables rules"
+iptables-legacy -t nat -S | grep "${comment}" | sed 's/^-A //' | while read rule; do iptables-legacy -t nat -D $rule; done 
+
+# Add iptable rules for smarter-dns
+echo "Add iptable rules for smarter-dns"
+iptables-legacy -t nat -A PREROUTING -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
+iptables-legacy -t nat -A OUTPUT     -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
+
+
 # cleanup
 rm -rf pod_dns.*
 

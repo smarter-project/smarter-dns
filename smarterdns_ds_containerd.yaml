@@ -75,14 +75,12 @@ spec:
           name: dns-tcp
           protocol: TCP
         securityContext:
-          allowPrivilegeEscalation: false
+          privileged: true        
           capabilities:
             add:
             - NET_BIND_SERVICE
             - NET_ADMIN
             - SYS_MODULE            
-            drop:
-            - all
           readOnlyRootFilesystem: false
       dnsPolicy: ClusterFirstWithHostNet
       volumes:
