@@ -20,6 +20,7 @@ metadata:
   name: smarterdnsconfig
   namespace: kube-system
 data:
+  CLUSTER_DOMAIN: "cluster.local"
   DNS_LOGGING: "False"
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "dockershim.sock"
@@ -31,18 +32,17 @@ metadata:
   name: smarter-dns-docker
   namespace: kube-system
   labels:
-    k8s-app: kube-dns
-    kubernetes.io/name: "CoreDNS"
+    k8s-app: smarter-dns
 spec:
   selector:
     matchLabels:
-      k8s-app: kube-dns
+      k8s-app: smarter-dns
   template:
     metadata:
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
       labels:
-        k8s-app: kube-dns
+        k8s-app: smarter-dns
     spec:
       nodeSelector:
         smarter.cri: docker

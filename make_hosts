@@ -13,6 +13,9 @@ DNSFILE="/tmp/cridns/smarterdns"
 
 env
 
+CLUSTER=${CLUSTER_DOMAIN:-"cluster.local"}
+
+
 # Setup to use default containerd socket
 CRI_SOCKET_DIR=${CRI_DIR:-"unix:///run/containerd"}
 CRI_SOCKET_FILE=${CRI_FILE:-"containerd.sock"}
@@ -23,7 +26,7 @@ CRICTL=${CRICTL_BIN:-"/usr/local/bin/k3s crictl"}
 #
 echo "crictl using socket: ${CRICTL_SOCKET}"
 echo "Container runtime info:"
-crictl -r ${CRICTL_SOCKET} info
+${CRICTL} -r ${CRICTL_SOCKET} info
 
 
 LOGGING=${DNS_LOGGING:-"False"}
@@ -32,7 +35,7 @@ LOGGING=${DNS_LOGGING:-"False"}
 host=`hostname`
 
 
-GATEWAY=$(ip addr show dev smartnet0 | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
+HOSTIP=$(ip addr show dev eth0 | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
 # cleanup
 rm -rf pod_dns.*
 
@@ -52,20 +55,21 @@ done=""
 
         for pod in $pods
         do
-            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name] | join(",")')
+            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name, .status.metadata.namespace] | join(",")')
             if [ ${res[2]} == "sandbox_ready" ]; then
                 if [[  -z "${res[0]}" ]]; then
-                  ip=$GATEWAY
+                  ip=$HOSTIP
                   name=${res[3]}
                 else
                   ip=${res[0]}
                   name=${res[1]}
                 fi
+                namespace=${res[4]}
 		if [[ ! -z $name ]]; then 
-                  if [ ${LOGGING} == "True" ]; then
-                      echo $ip $name $name.cluster $name."cluster.local"
+                    if [ ${LOGGING} == "True" ]; then
+                        echo $ip $name $name.$namespace.svc.${CLUSTER} $name.svc.${CLUSTER} $name."cluster.local"
                   fi
-                  echo $ip $name $name.cluster $name."cluster.local"  >> $TMPFILE
+                  echo $ip $name $name.$namespace.svc.${CLUSTER} $name.svc.${CLUSTER} $name."cluster.local"  >> $TMPFILE
 	        fi
             fi
         done
