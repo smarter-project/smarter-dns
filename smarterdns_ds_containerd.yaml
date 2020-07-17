@@ -25,6 +25,7 @@ data:
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "containerd.sock"
   CRICTL_BIN : "/usr/bin/k3s crictl"
+  WAIT_INTERVAL: "30"  
 ---
 apiVersion: apps/v1
 kind: DaemonSet

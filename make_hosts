@@ -31,6 +31,7 @@ ${CRICTL} -r ${CRICTL_SOCKET} info
 
 LOGGING=${DNS_LOGGING:-"False"}
 
+INTERVAL=${WAIT_INTERVAL:-"30"}
 
 host=`hostname`
 
@@ -94,5 +95,5 @@ done=""
         mv $TMPFILE $DNSFILE
     fi
 
-    sleep 5
+    sleep $INTERVAL
 done
