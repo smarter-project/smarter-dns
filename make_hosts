@@ -13,8 +13,11 @@ DNSFILE="/tmp/cridns/smarterdns"
 
 env
 
+# cluster
 CLUSTER=${CLUSTER_DOMAIN:-"cluster.local"}
 
+# cluster dns
+DNS=${CLUSTER_DNS:-"169.254.0.2"}
 
 # Setup to use default containerd socket
 CRI_SOCKET_DIR=${CRI_DIR:-"unix:///run/containerd"}
@@ -48,8 +51,8 @@ iptables-legacy -t nat -S | grep "${comment}" | sed 's/^-A //' | while read rule
 
 # Add iptable rules for smarter-dns
 echo "Add iptable rules for smarter-dns"
-iptables-legacy -t nat -A PREROUTING -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
-iptables-legacy -t nat -A OUTPUT     -d 169.254.0.2/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
+iptables-legacy -t nat -A PREROUTING -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
+iptables-legacy -t nat -A OUTPUT     -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
 
 
 # cleanup
