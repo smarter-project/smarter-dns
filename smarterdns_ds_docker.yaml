@@ -20,7 +20,7 @@ metadata:
   name: smarterdnsconfig
   namespace: kube-system
 data:
-  CLUSTER_DNS: "169.254.99.56"
+  CLUSTER_DNS: "169.254.0.2"
   CLUSTER_DOMAIN: "cluster.local"
   DNS_LOGGING: "False"
   CRI_DIR: "unix:///var/run/crisock"
