@@ -20,12 +20,13 @@ metadata:
   name: smarterdnsconfig
   namespace: kube-system
 data:
+  CLUSTER_DNS: "169.254.0.2"
   CLUSTER_DOMAIN: "cluster.local"
   DNS_LOGGING: "False"
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "containerd.sock"
   CRICTL_BIN : "/usr/bin/k3s crictl"
-  WAIT_INTERVAL: "30"  
+  WAIT_INTERVAL: "30"
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -40,15 +41,22 @@ spec:
       k8s-app: smarter-dns
   template:
     metadata:
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
       labels:
         k8s-app: smarter-dns
     spec:
       nodeSelector:
         smarter.cri: containerd
+      tolerations:
+        - key: "smarter.type"
+          operator: "Equal"
+          value: "edge"
+          effect: "NoSchedule"
       hostNetwork: true
       containers:
       - name: smarter-dns
-        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.0
+        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.2
         imagePullPolicy: Always
         resources:
           limits:
@@ -83,7 +91,7 @@ spec:
             - NET_ADMIN
             - SYS_MODULE            
           readOnlyRootFilesystem: false
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: Default
       volumes:
         # Defaults to using the standard directory containing the containerd socket
         - name: crisock
