@@ -51,8 +51,8 @@ iptables-legacy -t nat -S | grep "${comment}" | sed 's/^-A //' | while read rule
 
 # Add iptable rules for smarter-dns
 echo "Add iptable rules for smarter-dns"
-iptables-legacy -t nat -A PREROUTING -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
-iptables-legacy -t nat -A OUTPUT     -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}
+iptables-legacy -t nat -A PREROUTING -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}:353
+iptables-legacy -t nat -A OUTPUT     -d ${DNS}/32 -p udp -m udp --dport 53 -m comment --comment "${comment}" -j DNAT --to-destination ${HOSTIP}:353
 
 
 # cleanup

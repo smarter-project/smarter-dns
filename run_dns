@@ -6,4 +6,4 @@
 
 /make_hosts &
 
-/coredns $@
+/coredns -dns.port 353 $@
