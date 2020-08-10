@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: smarterdnscorefile
+  name: smarterdnscorefilevnode
   namespace: kube-system
 data:
   Corefile: |
@@ -17,10 +17,10 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: smarterdnsconfig
+  name: smarterdnsconfigvnode
   namespace: kube-system
 data:
-  CLUSTER_DNS: "169.254.0.2"
+  CLUSTER_DNS: "169.254.1.2"
   CLUSTER_DOMAIN: "cluster.local"
   DNS_LOGGING: "False"
   CRI_DIR: "unix:///var/run/crisock"
@@ -31,23 +31,23 @@ data:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: smarter-dns-docker
+  name: smarter-dns-docker-vnode
   namespace: kube-system
   labels:
-    k8s-app: smarter-dns
+    k8s-app: smarter-dns-vnode
 spec:
   selector:
     matchLabels:
-      k8s-app: smarter-dns
+      k8s-app: smarter-dns-vnode
   template:
     metadata:
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
       labels:
-        k8s-app: smarter-dns
+        k8s-app: smarter-dns-vnode
     spec:
       nodeSelector:
-        smarter.cri: docker
+        smarter.cri.vnode: docker
       tolerations:
         - key: "smarter.type"
           operator: "Equal"
@@ -55,7 +55,7 @@ spec:
           effect: "NoSchedule"
       hostNetwork: true
       containers:
-      - name: smarter-dns
+      - name: smarter-dns-vnode
         image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.3
         imagePullPolicy: Always
         resources:
@@ -67,7 +67,7 @@ spec:
         args: [ "-conf", "/etc/coredns/corefile" ]
         envFrom:
           - configMapRef:
-             name: smarterdnsconfig
+             name: smarterdnsconfigvnode
         volumeMounts:
         # Defaults to using the standard directory containing the containerd socket
         - name: crisock
@@ -103,7 +103,7 @@ spec:
             type: File
         - name: config-volume
           configMap:
-            name: smarterdnscorefile
+            name: smarterdnscorefilevnode
             items:
             - key: Corefile
               path: corefile
