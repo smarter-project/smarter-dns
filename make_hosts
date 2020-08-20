@@ -24,8 +24,19 @@ CRI_SOCKET_DIR=${CRI_DIR:-"unix:///run/containerd"}
 CRI_SOCKET_FILE=${CRI_FILE:-"containerd.sock"}
 CRICTL_SOCKET=${CRI_SOCKET_DIR}/${CRI_SOCKET_FILE}
 
+# Try to find the k3s binary
+if [ -f /host/usr/bin/k3s ]; then
+    K3S_BIN="/host/usr/bin/k3s"
+elif [ -f /host/usr/local/bin/k3s ]; then
+    K3S_BIN="/host/usr/local/bin/k3s"            
+fi
 
-CRICTL=${CRICTL_BIN:-"/usr/local/bin/k3s crictl"}
+if [ ! -z "${CRICTL_BIN}" ]; then
+    CRICTL=${CRICTL_BIN}
+else
+    CRICTL="$K3S_BIN crictl"
+fi
+
 #
 echo "crictl using socket: ${CRICTL_SOCKET}"
 echo "Container runtime info:"
