@@ -25,7 +25,6 @@ data:
   DNS_LOGGING: "False"
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "dockershim.sock"
-  CRICTL_BIN : "/usr/bin/k3s crictl"
   WAIT_INTERVAL: "30"
 ---
 apiVersion: apps/v1
@@ -56,7 +55,7 @@ spec:
       hostNetwork: true
       containers:
       - name: smarter-dns-vnode
-        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.3
+        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.4
         imagePullPolicy: Always
         resources:
           limits:
@@ -74,8 +73,11 @@ spec:
           mountPath: /var/run/crisock
         - name: config-volume
           mountPath: /etc/coredns
-        - name: k3s
-          mountPath: /usr/bin/k3s
+        - name: usrbin
+          mountPath: /host/usr/bin
+        - name: usrlocalbin
+          mountPath: /host/usr/local/bin
+          
         ports:
         - containerPort: 353
           name: dns
@@ -97,10 +99,14 @@ spec:
         - name: crisock
           hostPath:
             path: /var/run
-        - name: k3s
+        - name: usrbin
           hostPath:
-            path: /usr/bin/k3s
-            type: File
+            path: /usr/bin
+            type: DirectoryOrCreate
+        - name: usrlocalbin
+          hostPath:
+            path: /usr/local/bin
+            type: DirectoryOrCreate
         - name: config-volume
           configMap:
             name: smarterdnscorefilevnode
