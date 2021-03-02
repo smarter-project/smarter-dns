@@ -77,7 +77,8 @@ spec:
           mountPath: /host/usr/bin
         - name: usrlocalbin
           mountPath: /host/usr/local/bin
-          
+        - name: criconfig
+          mountPath: /var/lib/rancher/k3s/agent/etc
         ports:
         - containerPort: 353
           name: dns
@@ -106,6 +107,10 @@ spec:
         - name: usrlocalbin
           hostPath:
             path: /usr/local/bin
+            type: DirectoryOrCreate
+        - name: criconfig
+          hostPath:
+            path: /var/lib/rancher/k3s/agent/etc
             type: DirectoryOrCreate
         - name: config-volume
           configMap:
