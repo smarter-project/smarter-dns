@@ -49,8 +49,8 @@ INTERVAL=${WAIT_INTERVAL:-"30"}
 
 host=`hostname`
 
-
-HOSTIP=$(ip addr show dev eth0 | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
+IFACE=${IFACE:-"eth0"}
+HOSTIP=$(ip addr show dev ${IFACE} | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
 
 
 

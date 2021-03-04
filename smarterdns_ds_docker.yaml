@@ -26,6 +26,7 @@ data:
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "dockershim.sock"
   WAIT_INTERVAL: "30"
+  IFACE: "eth0"
 ---
 apiVersion: apps/v1
 kind: DaemonSet
