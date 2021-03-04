@@ -49,8 +49,9 @@ INTERVAL=${WAIT_INTERVAL:-"30"}
 
 host=`hostname`
 
-NET_IFACE=${IFACE:-"eth0"}
-HOSTIP=$(ip addr show dev ${NET_IFACE} | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
+#NET_IFACE=${IFACE:-"eth0"}
+#HOSTIP=$(ip addr show dev ${NET_IFACE} | grep "inet" | sed -ne "s/inet \([0-9][0-9.]*\).*/\1/p")
+HOSTIP=127.0.0.1
 
 
 
