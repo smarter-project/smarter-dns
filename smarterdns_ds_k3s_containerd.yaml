@@ -26,6 +26,7 @@ data:
   CRI_DIR: "unix:///var/run/crisock"
   CRI_FILE: "containerd.sock"
   WAIT_INTERVAL: "30"
+  IFACE: "eth0"
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -55,7 +56,7 @@ spec:
       hostNetwork: true
       containers:
       - name: smarter-dns
-        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.4
+        image: registry.gitlab.com/arm-research/smarter/smarter-dns:v1.3.5
         imagePullPolicy: Always
         resources:
           limits:
