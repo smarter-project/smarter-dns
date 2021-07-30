@@ -24,6 +24,9 @@ CRI_SOCKET_DIR=${CRI_DIR:-"unix:///run/containerd"}
 CRI_SOCKET_FILE=${CRI_FILE:-"containerd.sock"}
 CRICTL_SOCKET=${CRI_SOCKET_DIR}/${CRI_SOCKET_FILE}
 
+export CRI_CONFIG_FILE=${CRICTL_CONFIG}:-"/crictl.yaml"
+export CONTAINER_RUNTIME_ENDPOINT=${CRICTL_SOCKET}
+
 # Try to find the k3s binary
 if [ -f /host/usr/bin/k3s ]; then
     K3S_BIN="/host/usr/bin/k3s"
@@ -34,13 +37,16 @@ fi
 if [ ! -z "${CRICTL_BIN}" ]; then
     CRICTL=${CRICTL_BIN}
 else
-    CRICTL="$K3S_BIN crictl"
+    CRICTL="/crictl"
 fi
 
+
 #
+echo "Using ${CRICTL}"
 echo "crictl using socket: ${CRICTL_SOCKET}"
+echo "crictl using config: ${CRI_CONFIG_FILE}"
 echo "Container runtime info:"
-${CRICTL} -r ${CRICTL_SOCKET} info
+${CRICTL} info
 
 
 LOGGING=${DNS_LOGGING:-"False"}
@@ -74,7 +80,7 @@ rm -rf pod_dns.*
 while true; do
 done=""
 # Get the list of pods from the container runtime
-    pods=`${CRICTL} -r ${CRICTL_SOCKET} pods -q`
+    pods=`${CRICTL} pods -q`
 
 # if there are pods
     if [[ ! -z $pods ]]; then
@@ -86,7 +92,7 @@ done=""
 
         for pod in $pods
         do
-            IFS=', ' read -r -a  res < <(${CRICTL} -r ${CRICTL_SOCKET} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name, .status.metadata.namespace] | join(",")')
+            IFS=', ' read -r -a  res < <(${CRICTL} inspectp -o json $pod |  tr '[:upper:]' '[:lower:]' | jq -r '[.status.network.ip, .info.config.hostname, .status.state, .status.labels.name, .status.metadata.namespace] | join(",")')
             if [ ${res[2]} == "sandbox_ready" ]; then
                 if [[  -z "${res[0]}" ]]; then
                   ip=$HOSTIP
