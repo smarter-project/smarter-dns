@@ -1,0 +1,17 @@
+apiVersion: v2
+name: smarter-dns
+description: smarter-dns chart for SMARTER edge devices
+home: https://gitlab.com/smarter-project/smarter-dns
+version: 0.0.1
+appVersion: v1.3.7
+kubeVersion: ">=1.16.0-0"
+keywords:
+  - kubernetes
+  - device
+  - hardware
+sources:
+  - https://gitlab.com/smarter-project/smarter-dns
+#dependencies:
+#  - name: smarter-common
+#    repository: https://gitlab.com/smarter-project/documentation
+#    version: 0.0.1
