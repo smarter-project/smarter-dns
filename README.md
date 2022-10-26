@@ -15,8 +15,14 @@ Different nodes may be using different Container Runtimes and the `smarter.cri` 
 
  **Note that when using docker as the container runtime it is necessary to use the SMARTER k3s agent on the node**
 
+### Using helm
 
-### Choose the correct version of the YAML file
+A helm chart available at the the chart directory can be used to install smarter-dns
+```
+helm install smarter-dns chart
+```
+
+### Using YAML files
 
 Three YAML files are provided for smarter-dns depending on the container runtime that is being used on the node.
 
@@ -27,7 +33,7 @@ Three YAML files are provided for smarter-dns depending on the container runtime
 |`smarterdns_ds_k3s_containerd.yaml` | Use this when using k3s with it's bundled containerd |
 
 
-See <https://gitlab.com/arm-research/smarter/smarter-dns/-/releases> for the latest release of these YAML files.
+See <https://gitlab.com/smarter-project/smarter-dns/-/releases> for the latest release of these YAML files.
 
 
 ## Configuration
@@ -85,8 +91,8 @@ To build the smarter-dns image using docker:
 
 
     docker buildx create --use --name mybuild
-    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t registry.gitlab.com/arm-research/smarter/smarter-dns:vX.Y.Z --push .
+    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t registry.gitlab.com/smarter-project/smarter-dns:vX.Y.Z --push .
 
 
-You can replace "registry.gitlab.com/arm-research/smarter" with your own registry and then adjust the YAML file accordingly.
+You can replace "registry.gitlab.com/smarter-project/smarter-dns" with your own registry and then adjust the YAML file accordingly.
 
