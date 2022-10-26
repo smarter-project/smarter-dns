@@ -1,4 +1,4 @@
-FROM golang:1.14 as go
+FROM golang:1.19 as go
 
 FROM debian:stable-slim as build
 
