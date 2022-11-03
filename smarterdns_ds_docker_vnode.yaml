@@ -55,7 +55,7 @@ spec:
       hostNetwork: true
       containers:
       - name: smarter-dns-vnode
-        image: registry.gitlab.com/smarter-project/smarter-dns:v1.3.7
+        image: registry.gitlab.com/smarter-project/smarter-dns:v1.3.8
         imagePullPolicy: Always
         resources:
           limits:
