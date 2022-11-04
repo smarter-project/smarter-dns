@@ -12,3 +12,7 @@ image:
   # @default -- chart.appVersion
   tag: ""
   pullPolicy: IfNotPresent
+
+configuration:
+  nodeSelector:
+    smarter-dns: enabled

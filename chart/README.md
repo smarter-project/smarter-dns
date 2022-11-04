@@ -16,14 +16,20 @@ helm install my-smarter-dns smarter-dns
 DNS queries from normal pods and pods with host networking will all go to the IP address specified as the cluster-dns IP (by default this is `169.254.0.2`)
 The smarterdns pod sets up iptable rules to redirect these queries to the actual smarter-dns server which is executing as a pod with host-networking.
 Discovery of pod IPs on the node can also be performed by querying the same address: `169.254.0.2`
+
+### Values
+
+The configuration.nodeSelector value allows the nodeSelector to be changed in a higher level chart simplyfyng deploying multiple services at the same time; CNI, DNS and device-manager with a single label for example.
+
+
 ### Usage Model
 
 Smarter-dns is deployed using a Kubernetes DaemonSet - a smarter-dns Pod is created on every node with the relevant label and provides DNS lookup including Pod discovery.
 
-Different nodes may be using different Container Runtimes and the `smarter.cri` label is used to distinguish between them. At least one of these labels must be present on the node for smarter-dns to be deployed to it.
+Different nodes may be using different Container Runtimes and the `smarter-dns` label is used to distinguish between them. At least one of these labels must be present on the node for smarter-dns to be deployed to it.
 
- Apply label `smarter.cri=docker` when using docker
- Apply label `smarter.cri=containerd` when using containerd
+ Apply label `smarter-dns-docker:enabled` when using docker
+ Apply label `smarter-dns-containerd:enabled` when using containerd
 
 The smarterdnsconfig ConfigMap can be used to customise the smarterdns deployment.
 
