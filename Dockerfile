@@ -3,7 +3,7 @@ FROM golang:1.19 as build
 RUN go version
 
 #RUN apt-get update && apt-get -uy upgrade && apt-get install -y git make
-RUN apt-get update && apt-get -uy upgrade && apt-get install -y git make
+RUN apt-get update && apt-get install -y git make
 
 WORKDIR /root/coredns
 
