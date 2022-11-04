@@ -3,5 +3,6 @@ include:
     file: '/.gitlab-ci.yml'
 
 variables:
+  CI_BUILD_IMAGE:  registry.gitlab.com/smarter-project/smarter-dns:docker-buildx-qemu 
   CI_BUILDX_ARCHS: "linux/amd64,linux/arm64"
 
