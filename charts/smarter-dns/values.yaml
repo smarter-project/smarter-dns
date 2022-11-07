@@ -7,8 +7,7 @@ application:
   configMapConfigName: smarter-dns-config
 
 image:
-  repository: registry.gitlab.com/smarter-project/smarter-dns
-  #repository: registry.gitlab.com/smarter-project/smarter-dns
+  repository: ghcr.io/smarter-project/smarter-dns
   # @default -- chart.appVersion
   tag: ""
   pullPolicy: IfNotPresent
