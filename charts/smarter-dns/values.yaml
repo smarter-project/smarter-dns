@@ -1,7 +1,6 @@
 #
 
 application:
-  namespace: smarter
   appName: smarter-dns
   configMapCoreName: smarter-dns-core
   configMapConfigName: smarter-dns-config
@@ -11,7 +10,3 @@ image:
   # @default -- chart.appVersion
   tag: ""
   pullPolicy: IfNotPresent
-
-configuration:
-  nodeSelector:
-    smarter-dns: enabled
