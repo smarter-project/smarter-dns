@@ -2,7 +2,7 @@ apiVersion: v2
 name: smarter-dns
 description: smarter-dns chart for SMARTER edge devices
 home: https://getsmarter.io
-version: 0.0.2
+version: 0.0.4
 appVersion: v1.3.8
 kubeVersion: ">=1.16.0-0"
 keywords:
