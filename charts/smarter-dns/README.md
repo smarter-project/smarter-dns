@@ -7,7 +7,7 @@ For more information visit https://getsmarter.io
 ## TL;DR
 
 ```console
-helm repo add smarter https://smarter-project.gitlab.io/documentation/charts
+helm repo add smarter https://smarter-project.github.io/documentation
 helm install my-smarter-dns smarter-dns
 ```
 
