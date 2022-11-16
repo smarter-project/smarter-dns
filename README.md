@@ -33,7 +33,7 @@ Three YAML files are provided for smarter-dns depending on the container runtime
 |`smarterdns_ds_k3s_containerd.yaml` | Use this when using k3s with it's bundled containerd |
 
 
-See <https://gitlab.com/smarter-project/smarter-dns/-/releases> for the latest release of these YAML files.
+See <https://github.com/smarter-project/smarter-dns> for the latest release of these YAML files.
 
 
 ## Configuration
@@ -91,8 +91,8 @@ To build the smarter-dns image using docker:
 
 
     docker buildx create --use --name mybuild
-    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t registry.gitlab.com/smarter-project/smarter-dns:vX.Y.Z --push .
+    docker buildx build --platform linux/arm64/v8,linux/arm/v7,linux/amd64 -t ghcr.io/smarter-project/smarter-dns:vX.Y.Z --push .
 
 
-You can replace "registry.gitlab.com/smarter-project/smarter-dns" with your own registry and then adjust the YAML file accordingly.
+You can replace "ghcr.io/smarter-project/smarter-dns" with your own registry and then adjust the YAML file accordingly.
 
