@@ -15,6 +15,36 @@ entries:
         url: https://smarter-project.github.io/documentation/pgp_keys.asc
     apiVersion: v2
     appVersion: v1.3.8
+    created: "2022-11-16T21:12:43.658972296Z"
+    description: smarter-dns chart for SMARTER edge devices
+    digest: 83f4b30964344393a2f3a64c50d8ba5b2404531eeb5eecb2185a942070dd10cb
+    home: https://getsmarter.io
+    icon: https://github.com/smarter-project/documentation/raw/main/ARM1636_Project_Logo_ST2_RGB_V1.png
+    keywords:
+    - kubernetes
+    - device
+    - hardware
+    kubeVersion: '>=1.16.0-0'
+    name: smarter-dns
+    sources:
+    - https://github.com/smarter-project/smarter-dns
+    urls:
+    - https://github.com/smarter-project/smarter-dns/releases/download/smarter-dns-0.0.5/smarter-dns-0.0.5.tgz
+    version: 0.0.5
+  - annotations:
+      artifacthub.io/changes: |
+        - Fix template
+        - Add annotations
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/maintainers: |
+        - name: Alexandre Ferreira
+          email: alexandref75@gmail.com
+      artifacthub.io/prerelease: "false"
+      artifacthub.io/signKey: |
+        fingerprint: 71EDA4E3D652DC73EB09E3A5387D298C169CF24E
+        url: https://smarter-project.github.io/documentation/pgp_keys.asc
+    apiVersion: v2
+    appVersion: v1.3.8
     created: "2022-11-08T14:21:16.624899107Z"
     description: smarter-dns chart for SMARTER edge devices
     digest: bfe09c54fd137178f65122a5d685b887f4c68298012e18efe062d3d7dece9f96
@@ -61,4 +91,4 @@ entries:
     urls:
     - https://github.com/smarter-project/smarter-dns/releases/download/smarter-dns-0.0.2/smarter-dns-0.0.2.tgz
     version: 0.0.2
-generated: "2022-11-08T14:21:16.624906608Z"
+generated: "2022-11-16T21:12:43.658994587Z"
