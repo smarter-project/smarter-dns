@@ -16,7 +16,7 @@ FROM debian:stable-slim
 COPY --from=build /root/coredns/coredns /
 
 #RUN apt-get update && apt-get -uy upgrade && apt-get -y install ca-certificates && update-ca-certificates && apt-get -y install jq iproute2 iptables && apt-get autoremove && apt-get clean
-RUN apt-get update && apt-get -y install ca-certificates && update-ca-certificates && apt-get -y install jq iproute2 iptables && apt-get autoremove && apt-get clean
+RUN apt-get update && apt-get -y upgrade && apt-get -y install ca-certificates && update-ca-certificates && apt-get -y install jq iproute2 iptables && apt-get autoremove && apt-get clean
 #
 COPY make_hosts /make_hosts
 COPY run_dns /run_dns
