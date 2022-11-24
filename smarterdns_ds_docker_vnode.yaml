@@ -55,7 +55,7 @@ spec:
       hostNetwork: true
       containers:
       - name: smarter-dns-vnode
-        image: ghcr.io/smarter-project/smarter-dns:v1.3.9
+        image: ghcr.io/smarter-project/smarter-dns:v1.3.10
         imagePullPolicy: Always
         resources:
           limits:

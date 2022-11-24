@@ -1,4 +1,4 @@
-FROM golang:1.19 as build
+FROM golang:1.19.3 as build
 
 RUN go version
 
@@ -15,14 +15,14 @@ FROM alpine:latest
 
 COPY --from=build /root/coredns/coredns/coredns /
 
-RUN apk update && apk add ca-certificates jq iproute2 iptables bash
+RUN apk add --no-cache ca-certificates jq iproute2 iptables bash
 
 COPY make_hosts /make_hosts
 COPY run_dns /run_dns
 COPY crictl.yaml /crictl.yaml
 
 ARG TARGETARCH
-RUN apk add wget; \
+RUN apk add --no-cache wget; \
     wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.25.0/crictl-v1.25.0-linux-${TARGETARCH}.tar.gz;\
     apk del wget;\
     tar xf crictl-v1.25.0-linux-${TARGETARCH}.tar.gz;\
