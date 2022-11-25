@@ -1,4 +1,4 @@
-FROM golang:1.19 as build
+FROM golang:1.19.3 as build
 
 RUN go version
 
@@ -21,6 +21,7 @@ FROM alpine:latest
 
 COPY --from=build /root/coredns/coredns/coredns /
 COPY --from=build /root/coredns/crictl /
+
 
 RUN apk add --no-cache jq iproute2 iptables bash
 
